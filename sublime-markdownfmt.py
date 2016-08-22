@@ -5,9 +5,9 @@ class SublimeMarkdownfmt(sublime_plugin.EventListener):
 	def on_pre_save_async(self, view):
 		filename = sublime.View.file_name(view)
 		filename_sans_ext, fileext = os.path.splitext(sublime.View.file_name(view))
-		out, err, rcode = run_native_shell_command(os.environ['SHELL'], ["which", "markdownfmt"])
+		markdownfmt_bin, err, rcode = run_native_shell_command(os.environ['SHELL'], ["which", "markdownfmt"])
 		if fileext == '.md':
-			command = [out, "-w", filename]
+			command = [markdownfmt_bin, "-w", filename]
 			subprocess.Popen(command, env=os.environ, stdin=subprocess.PIPE, stdout=subprocess.PIPE, stderr=subprocess.PIPE)
 
 # Code snippet taken from sourcegraph-sublime
@@ -21,7 +21,6 @@ def run_native_shell_command(shell_env, command):
 	native_command += ['-l', '-c', command]
 	if not shell_env or shell_env == '':
 		native_command = command.split()
-
 	process = subprocess.Popen(native_command, stdout=subprocess.PIPE, stderr=subprocess.PIPE)
 	out, err = process.communicate()
 	if out:
